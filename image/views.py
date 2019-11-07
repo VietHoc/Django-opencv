@@ -25,7 +25,8 @@ def validate_image(request):
             detect_face_and_eyes(img),
             {'image_contrast': check_contrast_by_histogram(hist)},
             {'is_image_blur': is_image_blur(img)},
-            {'img_estim': img_estim(img, 127)}
+            {'img_estim': img_estim(img, 127)},
+            {'check_width_height_image_passport': check_width_height_image_passport(img)}
         ],
             status=status.HTTP_200_OK)
 
@@ -175,3 +176,12 @@ def img_estim(img, thrshld):
     # Document: https://stackoverflow.com/questions/52505906/find-if-image-is-bright-or-dark
     is_light = np.mean(img) > thrshld
     return 'light' if is_light else 'dark'
+
+
+def check_width_height_image_passport(img):
+    height, width, channels = img.shape
+    print(height, width, channels)
+    if abs((width / height) - (35 / 45)) < 0.1:
+        return 'width and height image is match 35 x 45'
+    else:
+        return 'width and height image is not match 35 x 45'
